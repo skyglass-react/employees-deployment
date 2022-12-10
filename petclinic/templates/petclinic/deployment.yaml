@@ -1,0 +1,26 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: petclinic
+  labels: 
+    app: petclinic
+    tier: backend 
+spec:
+  selector: 
+    matchLabels: 
+      app: petclinic
+  replicas: {{ .Values.deployment.workers.replicas }}      
+  template: 
+    metadata: 
+      name: petclinic
+      labels: 
+        app: petclinic
+        tier: backend 
+      annotations:
+        jenkins/build: {{ .Values.metadata.jenkins.buildTag | quote }}
+        git/commitId: {{ .Values.metadata.git.commitId | quote }}
+    spec:
+      containers: 
+        - name: petclinic
+          image: "skyglass/petclinic:{{ .Values.deployment.tag }}" 
+          imagePullPolicy: Always
